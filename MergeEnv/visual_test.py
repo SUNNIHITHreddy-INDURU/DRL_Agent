@@ -13,18 +13,17 @@ def make_viz_env():
     # Create the environment with render_mode='human' to see it
     env = gym.make("merge-v0", render_mode='human')
     
-    # Configure it EXACTLY like the training env to ensure model compatibility
+    # Configure it EXACTLY like the training env to ensure model compatibility 
+    # -- change cells and max range if done for lidar agent
     # IMPORTANT: Use env.unwrapped.configure() to avoid AttributeError
-    # Configuration matches User Request for Lidar Agent:
-    # "Observation: LidarObservation... 16 beams... max range of 32 meters"
     env.unwrapped.configure({
         "action": {
             "type": "DiscreteMetaAction",
         },
         "observation": {
             "type": "LidarObservation",
-            "cells": 16,
-            "maximum_range": 32,
+            "cells": 128, # default value 
+            "maximum_range": 64, # default value
             "normalize": True
         }
     })

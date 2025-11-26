@@ -19,15 +19,15 @@ def make_env():
     env = gym.make("merge-v0", render_mode=None)
     # Environment configuration:
     # Action Space: Mode A (Discrete)
-    # Observation: LidarObservation. Configure: 16 beams and a max range of 32 meters"
+    # LidarObservation. 
     env.unwrapped.configure({
         "action": {
             "type": "DiscreteMetaAction",
         },
         "observation": {
             "type": "LidarObservation",
-            "cells": 16,
-            "maximum_range": 32,
+            "cells": 128, # default values
+            "maximum_range": 64, # default values
             "normalize": True
         }
     })
@@ -82,8 +82,8 @@ viz_env.unwrapped.configure({
     },
     "observation": {
         "type": "LidarObservation",
-        "cells": 16,
-        "maximum_range": 32,
+        "cells": 128,
+        "maximum_range": 64,
         "normalize": True
     }
 })
