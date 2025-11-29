@@ -6,72 +6,128 @@ from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.monitor import Monitor
 
 # ------------------------------------------
-# Visual view of lidar agent
+# Visual view of agents
 # ------------------------------------------
 
-def make_viz_env():
-    # Create the environment with render_mode='human' to see it
-    env = gym.make("merge-v0", render_mode='human')
+def visualize_lidar_agent():
+    print("\n--- Visualizing Lidar Agent ---")
     
-    # Configure it EXACTLY like the training env to ensure model compatibility 
-    # -- change cells and max range if done for lidar agent
-    # IMPORTANT: Use env.unwrapped.configure() to avoid AttributeError
-    env.unwrapped.configure({
-        "action": {
-            "type": "DiscreteMetaAction",
-        },
-        "observation": {
-            "type": "LidarObservation",
-            "cells": 128, # default value 
-            "maximum_range": 64, # default value
-            "normalize": True
-        }
-    })
-    env.reset()
-    return env
+    def make_viz_env():
+        # Create the environment with render_mode='human' to see it
+        env = gym.make("merge-v0", render_mode='human')
+        
+        # Configure it EXACTLY like the training env
+        env.unwrapped.configure({
+            "action": {
+                "type": "DiscreteMetaAction",
+            },
+            "observation": {
+                "type": "LidarObservation",
+                "cells": 128, 
+                "maximum_range": 64, 
+                "normalize": True
+            }
+        })
+        env.reset()
+        return env
 
-# Path to the saved model
-# Note: SB3 adds .zip automatically, so we just point to the base name
-model_path = "./logs/lidar/lidar_dqn_model"
+    # Path to the saved model
+    model_path = "./logs/merge_lidar/lidar_dqn_model"
 
-if not os.path.exists(model_path + ".zip"):
-    print(f"Error: Model not found at {model_path}.zip")
-    print("Please run 'python MergeEnv/lidar_agent.py' first to train the agent.")
-    exit(1)
+    if not os.path.exists(model_path + ".zip"):
+        print(f"Error: Model not found at {model_path}.zip")
+        print("Please run 'python MergeEnv/lidar_agent.py' first to train the agent.")
+        return
 
-print(f"Loading model from {model_path}...")
+    print(f"Loading model from {model_path}...")
 
-# init environment
-# Monitor is used for watching agent
-# Wrap in DummyVecEnv to follow SB3 documentation
-viz_env = Monitor(make_viz_env())
-viz_env = DummyVecEnv([lambda: viz_env]) # Follow Vectorized Environment
+    # init environment
+    viz_env = Monitor(make_viz_env())
+    viz_env = DummyVecEnv([lambda: viz_env]) 
 
-# Load the model
-# SB3 Documentation: https://stable-baselines3.readthedocs.io/en/master/modules/dqn.html#stable_baselines3.dqn.DQN.load
-model = DQN.load(model_path, env=viz_env)
+    # Load the model
+    model = DQN.load(model_path, env=viz_env)
 
-# Run for a few episodes
-n_episodes = 20 
-print(f"Running for {n_episodes} episodes...")
+    # # of episodes to run
+    n_episodes = 20
+    print(f"Running for {n_episodes} episodes...")
 
-for episode in range(n_episodes):
-    obs = viz_env.reset()
-    done = False
-    total_reward = 0
+    for episode in range(n_episodes):
+        obs = viz_env.reset()
+        done = False
+        total_reward = 0
+        
+        while not done:
+            action, _ = model.predict(obs, deterministic=True)
+            obs, reward, done, info = viz_env.step(action)
+            total_reward += reward
+            
+        print(f"Episode {episode + 1}: Total Reward = {total_reward}")
+
+    print("Lidar Visualization finished.")
+    viz_env.close()
+
+
+def visualize_grayscale_agent():
+    print("\n--- Visualizing Grayscale Agent ---")
+
+    def make_viz_env():
+        env = gym.make("merge-v0", render_mode='human')
+        # GrayscaleObservation with stack_size=4
+        env.unwrapped.configure({
+            "observation": {
+                "type": "GrayscaleObservation",
+                "observation_shape": (128, 64),
+                "stack_size": 4, # stack size for images
+                "weights": [0.2989, 0.5870, 0.1140],  # Standard RGB to Grayscale weights
+                "scaling": 1.75,
+            },
+            "action": {
+                "type": "DiscreteMetaAction",
+            }
+        })
+        env.reset()
+        return env
+
+    # Path to the saved model
+    model_path = "./logs/merge_greyscale/greyscale_dqn_model"
+
+    if not os.path.exists(model_path + ".zip"):
+        print(f"Error: Model not found at {model_path}.zip")
+        print("Please run 'python MergeEnv/greyscale_agent.py' first to train the agent.")
+        return
+
+    print(f"Loading model from {model_path}...")
+
+    # init environment
+    viz_env = Monitor(make_viz_env())
+    viz_env = DummyVecEnv([lambda: viz_env]) 
+
+    # Load the model
+    model = DQN.load(model_path, env=viz_env)
+
+    # # of episodes to run
+    n_episodes = 20
+    print(f"Running for {n_episodes} episodes...")
+
+    for episode in range(n_episodes):
+        obs = viz_env.reset()
+        done = False
+        total_reward = 0
+        
+        while not done:
+            action, _ = model.predict(obs, deterministic=True)
+            obs, reward, done, info = viz_env.step(action)
+            total_reward += reward
+            
+        print(f"Episode {episode + 1}: Total Reward = {total_reward}")
+
+    print("Grayscale Visualization finished.")
+    viz_env.close()
+
+# main function to run either lidar or grayscale agent
+if __name__ == "__main__":
     
-    while not done:
-        # Predict action 
-        action, _ = model.predict(obs, deterministic=True)
-        
-        # Step the environment
-        obs, reward, done, info = viz_env.step(action)
-        
-        total_reward += reward
-        
-        # Render is handled with ENV: render_mode='human'
-        
-    print(f"Episode {episode + 1}: Total Reward = {total_reward}")
-
-print("Visualization finished.")
-viz_env.close()
+    
+    # visualize_lidar_agent()
+    visualize_grayscale_agent()

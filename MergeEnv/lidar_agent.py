@@ -35,7 +35,7 @@ def make_env():
     return env
 
 # Create log dir
-log_dir = "./logs/lidar/"
+log_dir = "./logs/merge_lidar/" # Change to Merge_lidar for merge env
 os.makedirs(log_dir, exist_ok=True)
 
 # Initialize environment and agent
@@ -57,7 +57,7 @@ model = DQN(
 )
 
 print("Starting training for Lidar Agent...")
-model.learn(total_timesteps=20000)
+model.learn(total_timesteps=50000) # increases from 20K -- Better performance --
 print("Training finished.")
 
 # Save the model
@@ -124,7 +124,7 @@ def plot_results(log_folder):
     df['timesteps'] = df['l'].cumsum()
     
     # Rolling average smoothing
-    window_size = 50
+    window_size = 50  # avg of last 50 timesteps
     df['reward_smooth'] = df['r'].rolling(window=window_size).mean()
     
     plt.figure(figsize=(10, 6))

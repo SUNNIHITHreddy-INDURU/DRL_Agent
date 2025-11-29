@@ -1,0 +1,26 @@
+Running agents and visualizations
+
+## 1. Training the Agents
+Run these commands from the root directory (DRL_Agent):
+
+### Train Lidar Agent
+
+python MergeEnv/lidar_agent.py
+
+
+### Train Grayscale Agent
+
+python MergeEnv/greyscale_agent.py
+
+
+## 2. Visualizing the Agents
+To watch the trained agents perform in the environment:
+
+python MergeEnv/visual_test.py
+
+### Switching Between Agents
+To choose which agent to visualize, open `MergeEnv/visual_test.py` and scroll to the bottom:
+
+In 
+if __name__ == "__main__" uncomment the function you want to run
+    
