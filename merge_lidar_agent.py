@@ -55,10 +55,10 @@ model = DQN(
     "MlpPolicy",
     env,
     policy_kwargs=dict(net_arch=[256, 256]),
-    learning_rate=1e-4,
-    buffer_size=200000,
-    learning_starts=5000,
-    batch_size=128,
+    learning_rate=5e-5,
+    buffer_size=400000,
+    learning_starts=10000,
+    batch_size=256,
     train_freq=4,
     gradient_steps=1,
     target_update_interval=2000,
@@ -70,7 +70,7 @@ model = DQN(
 )
 
 print("Starting training for Lidar Agent...")
-model.learn(total_timesteps=20000)
+model.learn(total_timesteps=50000)
 print("Training finished.")
 
 # Save the model
