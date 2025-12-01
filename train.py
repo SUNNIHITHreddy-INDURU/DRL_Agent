@@ -17,9 +17,7 @@ from sb3_contrib import QRDQN
 import multi_stage_env
 
 
-# ---------------------------------------------------------
-# Helper: create environment with unwrapping + observation config
-# ---------------------------------------------------------
+
 def make_env(env_name, obs_type="lidar", render_mode=None, seed=0):
     """Creates an environment, unwraps Gymnasium wrappers, and applies observation config."""
     def _init():
@@ -54,9 +52,7 @@ def make_env(env_name, obs_type="lidar", render_mode=None, seed=0):
     return _init
 
 
-# ---------------------------------------------------------
-# Experiment ID → environment name + observation type
-# ---------------------------------------------------------
+
 def get_env_name_from_id(exp_id):
     env_map = {
         # Task 1: Highway
@@ -77,7 +73,7 @@ def get_env_name_from_id(exp_id):
         11: ("intersection-v0", "grayscale"),
         12: ("intersection-v0", "grayscale"),
 
-        # 🔥 FIXED: Your improved custom environment
+        
         13: ("highway-construction-v0", "lidar"),
         14: ("highway-construction-v0", "lidar"),
 
@@ -92,9 +88,7 @@ def get_env_name_from_id(exp_id):
     return env_map[exp_id]
 
 
-# ---------------------------------------------------------
-# TRAIN FUNCTION
-# ---------------------------------------------------------
+
 def train(args):
     print("\n" + "=" * 80)
     print(f"TRAINING | Algo = {args.algo.upper()} | Exp-ID = {args.exp_id}")
@@ -112,9 +106,7 @@ def train(args):
     os.makedirs(model_dir, exist_ok=True)
     os.makedirs(tb_dir, exist_ok=True)
 
-    # -----------------------------------------------------
-    # SubprocVecEnv (4 environments in parallel)
-    # -----------------------------------------------------
+   
     env_fns = [
         make_env(args.env_name, args.obs_type, seed=args.seed + i)
         for i in range(4)
@@ -133,9 +125,7 @@ def train(args):
         "qrdqn": QRDQN,
     }[args.algo.lower()]
 
-    # -----------------------------------------------------
-    # Hyperparameters (we keep your optimized QR-DQN config)
-    # -----------------------------------------------------
+
     if args.algo.lower() == "qrdqn":
         model_kwargs = {
             "learning_rate": 3e-4,
@@ -214,9 +204,7 @@ def train(args):
     eval_env.close()
 
 
-# ---------------------------------------------------------
-# TEST FUNCTION
-# ---------------------------------------------------------
+
 def test(args):
     print("\n" + "=" * 80)
     print(f"TESTING | Algo = {args.algo.upper()} | Exp-ID = {args.exp_id}")
@@ -276,9 +264,7 @@ def test(args):
     env.close()
 
 
-# ---------------------------------------------------------
-# MAIN
-# ---------------------------------------------------------
+
 def main():
     parser = argparse.ArgumentParser(description="DRL Training & Testing Pipeline")
 
@@ -294,12 +280,12 @@ def main():
     parser.add_argument("--load-model", type=str, default=None)
     parser.add_argument("--render", action="store_true")
 
-    # ⭐ NEW: Seed argument
+    
     parser.add_argument("--seed", type=int, default=0)
 
     args = parser.parse_args()
 
-    # Auto-detect env/obs from exp_id
+   
     if args.env_name is None or args.obs_type is None:
         args.env_name, args.obs_type = get_env_name_from_id(args.exp_id)
 
