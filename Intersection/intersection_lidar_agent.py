@@ -58,15 +58,16 @@ model = PPO(
     gamma=0.99,
     gae_lambda=0.95,
     clip_range=0.2,
-    vf_coef=0.5,
     ent_coef=0.01,
+    vf_coef=0.5,
     max_grad_norm=0.5,
-
     verbose=1,
+    tensorboard_log="./logs/tensorboard/intersection_lidar/"
 )
 
+
 print("Starting training for Intersection Lidar Agent...")
-model.learn(total_timesteps=20000)
+model.learn(total_timesteps=20000, tb_log_name="PPO_Lidar_Run1")
 print("Training finished.")
 
 # Save the model
