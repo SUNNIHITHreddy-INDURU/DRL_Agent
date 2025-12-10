@@ -34,7 +34,7 @@ def make_env():
     return env
 
 # Create log dir
-log_dir = "./logs/merge_greyscale/"
+log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs/merge_greyscale/")
 os.makedirs(log_dir, exist_ok=True)
 
 # init environment and agent
@@ -49,11 +49,20 @@ model = DQN(
     "CnnPolicy",
     env,
     buffer_size=100000, # 1/10 of default for 8gb ram @ moment -- change for larger ram --
+    learning_rate=1e-4,
+    batch_size=32,             # reduce batch size
+    gamma=0.98,                # lower discount 
+    train_freq=4,              # Train every 4 steps
+    gradient_steps=1,          # 1 gradient step per training trigger
+    target_update_interval=2000, # Update target net more often (default 10K)
+    learning_starts=2000,      # start learning at 2K steps
+    exploration_fraction=0.3,  # Explore for 30% of total timesteps (longer exploration)
+    exploration_final_eps=0.05, # keep 5% exploration at all times after
     verbose=1
 )
 
 print("Starting training for Grayscale Agent...")
-model.learn(total_timesteps=20000) # action steps
+model.learn(total_timesteps=200000) # action steps
 print("Training finished.")
 
 # Save the model
