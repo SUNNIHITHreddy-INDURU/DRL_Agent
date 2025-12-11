@@ -58,7 +58,7 @@ model = PPO(
 
 print("Starting training for Custom Roundabout Agent...")
 model.learn(
-    total_timesteps=20000,
+    total_timesteps=200000,
     # tb_log_name="PPO_Roundabout_Run1"
 )
 print("Training finished.")
