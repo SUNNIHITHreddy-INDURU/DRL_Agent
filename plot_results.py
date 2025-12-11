@@ -1,15 +1,4 @@
-"""
-Plotting script for Multi-Stage Highway Environment Results
 
-Generates:
-1. Learning curves (reward vs training episodes)
-2. Violin plots (performance test results for 500 episodes)
-
-Usage:
-    python plot_results.py --exp-id 1 --plot-type learning
-    python plot_results.py --exp-id 2 --plot-type performance
-    python plot_results.py --exp-id all --plot-type both
-"""
 
 import argparse
 import os
@@ -83,14 +72,7 @@ def plot_learning_curve(exp_id, log_dir, save_dir="plots"):
 
 
 def plot_performance_test(exp_id, results_file, save_dir="plots"):
-    """
-    Plot violin plot for performance test results
     
-    Args:
-        exp_id: Experiment ID
-        results_file: Path to test results .npz file
-        save_dir: Directory to save plots
-    """
     print(f"Plotting performance test for Experiment {exp_id}...")
     
     try:
@@ -151,13 +133,7 @@ def plot_performance_test(exp_id, results_file, save_dir="plots"):
 
 
 def plot_all_learning_curves(exp_ids, save_dir="plots"):
-    """
-    Plot all learning curves in a grid
-    
-    Args:
-        exp_ids: List of experiment IDs
-        save_dir: Directory to save plots
-    """
+   
     print("Plotting all learning curves...")
     
     n_plots = len(exp_ids)
@@ -208,14 +184,7 @@ def plot_all_learning_curves(exp_ids, save_dir="plots"):
 
 
 def plot_comparison(exp_ids, labels, save_dir="plots"):
-    """
-    Compare multiple experiments in one plot
     
-    Args:
-        exp_ids: List of experiment IDs to compare
-        labels: Labels for each experiment
-        save_dir: Directory to save plots
-    """
     print(f"Plotting comparison for experiments: {exp_ids}")
     
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -254,14 +223,7 @@ def plot_comparison(exp_ids, labels, save_dir="plots"):
 
 
 def plot_stage_progress(log_dir, save_dir="plots"):
-    """
-    Plot stage completion progress for multi-stage environment
-    (Custom visualization for your 8-stage environment)
     
-    Args:
-        log_dir: Directory containing training logs
-        save_dir: Directory to save plots
-    """
     print("Plotting stage progress...")
     
     # This is a placeholder - you'll need to log stage info during training
